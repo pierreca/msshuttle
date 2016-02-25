@@ -5,7 +5,7 @@
 			"name": "OBD",
 			"type": "node",
 			"request": "launch",
-			"program": "obd2reader.ts",
+			"program": "orchestrator.ts",
 			"stopOnEntry": false,
 			"args": [],
 			"cwd": ".",

@@ -7,7 +7,7 @@
 var Http = require('azure-iot-device-http').Http;
 var Client = require('azure-iot-device').Client;
 var Message = require('azure-iot-device').Message;
-var Obd2Reader = require('Obd2Reader');
+var Obd2Reader = require('./Obd2Reader').Obd2Reader;
 
 
 class EngineRecord {
