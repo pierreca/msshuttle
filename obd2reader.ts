@@ -1,4 +1,4 @@
-var Obd2 = require('obd2')
+var Obd2 = require('obd2');
 var debug = require('debug')('msshuttle:obd');
 var fs = require('fs');
 
