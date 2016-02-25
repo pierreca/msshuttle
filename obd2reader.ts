@@ -2,7 +2,7 @@ var Obd2 = require('obd2');
 var debug = require('debug')('msshuttle:obd');
 var fs = require('fs');
 
-module Obd2Reader {
+export module Obd2Reader {
         
     export class VehicleStatus {
         at: string;
