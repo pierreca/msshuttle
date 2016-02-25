@@ -2,10 +2,10 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Launch",
+			"name": "OBD",
 			"type": "node",
 			"request": "launch",
-			"program": "obd2reader.ts",
+			"program": "obd2reader.js",
 			"stopOnEntry": false,
 			"args": [],
 			"cwd": ".",
@@ -15,7 +15,26 @@
 			],
 			"env": {
 				"NODE_ENV": "development",
-                "DEBUG": "OBD2.*"
+                "DEBUG": "msshuttle:*"
+			},
+			"externalConsole": false,
+			"sourceMaps": false,
+			"outDir": null
+		},{
+			"name": "GPS",
+			"type": "node",
+			"request": "launch",
+			"program": "gpsreader.js",
+			"stopOnEntry": false,
+			"args": [],
+			"cwd": ".",
+			"runtimeExecutable": null,
+			"runtimeArgs": [
+				"--nolazy"
+			],
+			"env": {
+				"NODE_ENV": "development" //,
+                //"DEBUG": "msshuttle.*"
 			},
 			"externalConsole": false,
 			"sourceMaps": false,

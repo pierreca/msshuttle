@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/pierreca/msshuttle#readme",
   "dependencies": {
-    "obd2": "^0.1.2"
+    "nmea": "0.0.9",
+    "obd2": "^0.1.2",
+    "serialport": "^2.0.6"
   }
 }
