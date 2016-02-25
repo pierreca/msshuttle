@@ -21,7 +21,7 @@
 	"showOutput": "always",
 
 	// args is the HelloWorld program to compile.
-	"args": ["--outDir", "lib", "--sourcemap", "obd2reader.ts",  "gpsreader.ts", "orchestrator.ts"],
+	"args": ["--outDir", "lib", "--sourcemap", "node.d.ts", "obd2reader.ts",  "gpsreader.ts", "orchestrator.ts"],
 
 	// use the standard tsc problem matcher to find compile problems
 	// in the output.
