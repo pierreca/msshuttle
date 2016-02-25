@@ -31,23 +31,22 @@ export module GpsReader {
         public start() : void {
             if (!this.started) {
                 this.started = true;
-                
+                var self = this;
                 if(this.realData) {
                     this.serialPort.on('data', function (line) {
                         try {
                             var parsedData = nmea.parse(line);
                             debug('Parsed: ' + JSON.stringify(parsedData));
                             if (parsedData.hasOwnProperty('lat')) {
-                                this.status.latitude = parsedData.lat;
-                                this.status.longitude = parsedData.lon;
-                                this.status.altitude = parsedData.alt;
+                                self.status.latitude = parsedData.lat / 100;
+                                self.status.longitude = parsedData.lon / 100;
+                                self.status.altitude = parsedData.alt;
                             }
                         } catch (err) {
                             debug('Could not parse: ' + line)
                         }
                     });
                 } else {
-                    var self = this;
                     var fakeData = [];
                     var lineReader = require('readline').createInterface({
                         input: require('fs').createReadStream('fakegps.txt')
@@ -73,4 +72,11 @@ export module GpsReader {
             }
         }
     }
+    
+    // var gpsReader = new GpsReader(true, 'COM7');
+    // gpsReader.start();
+    
+    // setInterval(function() {
+    //     console.log('Lat: ' + gpsReader.status.latitude + ' - Lng: ' + gpsReader.status.longitude + ' - Alt: ' + gpsReader.status.altitude);
+    // }, 1000);
 }
