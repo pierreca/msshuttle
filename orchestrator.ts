@@ -76,7 +76,7 @@ class Orchestrator {
                     enginerecord.throttle = Math.round(vs.throttle);
                     var gpsData = gps.status;
                     enginerecord.lat = gpsData.latitude;
-                    enginerecord.lng = gpsData.longitude;
+                    enginerecord.lng = -gpsData.longitude;
                     var nullOrUndefined= function(arg) {
                         return arg===null || arg === undefined;
                     }

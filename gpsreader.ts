@@ -67,8 +67,8 @@ export module GpsReader {
                                 var parsedData = nmea.parse(fakeData[i]);
                                 debug('Parsed: ' + JSON.stringify(parsedData));
                                 if (parsedData.hasOwnProperty('lat')) {
-                                    self.status.latitude = parsedData.lat / 100;
-                                    self.status.longitude = parsedData.lon / 100;
+                                    self.status.latitude = parsedData.lat / 100.0;
+                                    self.status.longitude = parsedData.lon / 100.0;
                                     self.status.altitude = parsedData.alt;
                                 }
                             } catch (err) {
