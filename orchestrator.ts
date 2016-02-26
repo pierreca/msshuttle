@@ -20,7 +20,7 @@ class EngineRecord {
     speed: number;
     throttle: number;
     engineLoad: number;
-    engineOilTemp: number;
+    engineCoolantTemp: number;
     engine_light: boolean;
     lat: number;
     lng: number;
@@ -31,9 +31,9 @@ class Orchestrator {
     public static main() : number {
 
         var orchestrator = new Orchestrator();
-        var obd2 = new Obd2Reader.Obd2Reader(false, "COM3");
+        var obd2 = new Obd2Reader.Obd2Reader(true, "COM4");
         obd2.start();
-        var gps = new GpsReader.GpsReader(false, "COM7");
+        var gps = new GpsReader.GpsReader(true, "COM7");
         gps.start();
         const isReachable = require('is-reachable');
         

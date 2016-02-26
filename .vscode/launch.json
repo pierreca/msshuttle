@@ -2,10 +2,29 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "OBD",
+			"name": "Orchestrator",
 			"type": "node",
 			"request": "launch",
 			"program": "orchestrator.ts",
+			"stopOnEntry": false,
+			"args": ["HostName=msshuttle.azure-devices.net;DeviceId=pierre;SharedAccessKey=oGD4m3uW4sfi2UvyPmNKLDNpcbbHdiTkID06rTun5V0="],
+			"cwd": ".",
+			"runtimeExecutable": null,
+			"runtimeArgs": [
+				"--nolazy"
+			],
+			"env": {
+				"NODE_ENV": "development",
+                "DEBUG": "msshuttle:*"
+			},
+			"externalConsole": false,
+			"sourceMaps": true,
+			"outDir": "lib"
+		},{
+			"name": "OBD",
+			"type": "node",
+			"request": "launch",
+			"program": "obd2reader.ts",
 			"stopOnEntry": false,
 			"args": [],
 			"cwd": ".",
@@ -15,7 +34,7 @@
 			],
 			"env": {
 				"NODE_ENV": "development",
-                "DEBUG": "msshuttle:*"
+                "DEBUG": "msshuttle.*"
 			},
 			"externalConsole": false,
 			"sourceMaps": true,

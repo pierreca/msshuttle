@@ -35,6 +35,7 @@ export module GpsReader {
                 if(this.realData) {
                     this.serialPort.on('data', function (line) {
                         try {
+                            fs.appendFile('gps.txt', line + '\r\n');
                             var parsedData = nmea.parse(line);
                             debug('Parsed: ' + JSON.stringify(parsedData));
                             if (parsedData.hasOwnProperty('lat')) {
@@ -54,7 +55,6 @@ export module GpsReader {
 
                     lineReader.on('line', function (line) {
                         fakeData.push(line);
-                        console.log(line);
                     });
                     
                     var i = 0;
@@ -67,7 +67,7 @@ export module GpsReader {
                             self.status.altitude = parsedData.alt;
                         }
                         i++;
-                    }, 1000);
+                    }, 100);
                 }
             }
         }

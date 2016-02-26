@@ -1,4 +1,4 @@
-var Obd2 = require('obd2');
+var OBDReader = require('serial-obd');
 var debug = require('debug')('msshuttle:obd');
 var fs = require('fs');
 
@@ -10,102 +10,68 @@ export module Obd2Reader {
         speed: number;
         throttle: number;
         engineLoad: number;
-        engineOilTemp: number;
+        engineCoolantTemp: number;
         engine_light: boolean;
     }
 
     export class Obd2Reader {
         realData: boolean;
         status: VehicleStatus;
-        reader: any;
+        serialOBDReader: any;
         constructor(realData: boolean, comPort: string) {
             this.status = new VehicleStatus();
             this.realData = realData;
             if (realData) {
-                this.reader = new Obd2({
-                    delay: 1000,
-                    device: "elm327",
-                    serial: "usb",
-                    baud: 115200,
-                    port: comPort
+                var self = this;
+                this.serialOBDReader = new OBDReader('COM4', { baudrate: 115200 });
+                this.serialOBDReader.on('dataReceived', function (data) {
+                    debug(data);
+                    self.status.at = new Date().toISOString();
+                    if (data.name === 'vss') self.status.speed = data.value;
+                    if (data.name === 'throttlepos') self.status.throttle = data.value;
+                    if (data.name === 'rpm') self.status.rpm = data.value;
+                    if (data.name === 'load_pct') self.status.engineLoad = data.value;
+                    if (data.name === 'temp') self.status.engineCoolantTemp = data.value;
+                    if(data.name === 'requestdtc') self.status.engine_light = !(data.value.errors[0].indexOf('undefined') > 0);
                 });
-                
-                this.reader.on('dataParsed', function(data) {
-                debug('data parsed: ' + data);
-                });
-                
-                this.reader.on('dataReceived', function (data) {
-                    debug('data received: ' + data);
-                });
-                
-                // RPMs
-                this.reader.readPID('0c', '01', function (data) {
-                    debug('readPID: [PID = ' + data + '][MODE = ' + data + '][DATA = ' + data + ']');
-                    this.status.rpm = parseInt(data.value); 
-                });
-                
-                // Speed
-                this.reader.readPID('0d', '01', function (data) {
-                    debug('readPID: [PID = ' + data + '][MODE = ' + data + '][DATA = ' + data + ']');
-                    this.status.speed = parseInt(data.value); 
-                }); 
-                
-                // Throttle
-                this.reader.readPID('5a', '01', function (data) {
-                    debug('readPID: [PID = ' + data + '][MODE = ' + data + '][DATA = ' + data + ']');
-                    this.status.throttle = parseInt(data.value); 
-                });
-                
-                // Engine load
-                this.reader.readPID('04', '01', function (data) {
-                    debug('readPID: [PID = ' + data + '][MODE = ' + data + '][DATA = ' + data + ']');
-                    this.status.engineLoad = parseInt(data.value); 
-                });
-                
-                // Engine oil temp
-                this.reader.readPID('5c', '01', function (data) {
-                    debug('readPID: [PID = ' + data + '][MODE = ' + data + '][DATA = ' + data + ']');
-                    this.status.engineOilTemp = parseInt(data.value); 
+
+                this.serialOBDReader.on('connected', function (data) {
+                    this.addPoller("requestdtc");
+                    this.addPoller("vss");
+                    this.addPoller("rpm");
+                    this.addPoller("temp");
+                    this.addPoller("load_pct");
+                    this.addPoller("map");
+                    this.addPoller("throttlepos");
+
+                    this.startPolling(2000); //Polls all added pollers each 2000 ms.
                 });
             }
         }
         
         public start(): void {
             debug('OBD reader starting');
+            var self = this;
             if (this.realData) {
-                this.reader.start(function () {
-                    debug('OBD reader started.'); 
-                });
+                this.serialOBDReader.connect();
+                setInterval(function(){
+                    fs.appendFile('obd.txt', JSON.stringify(self.status) + '\r\n');
+                }, 2000);
             } else {
-                var self = this;
-                self.status.rpm = 600;
+                var fakeData = [];
+                var lineReader = require('readline').createInterface({
+                    input: require('fs').createReadStream('fakeobd.txt')
+                });
+
+                lineReader.on('line', function (line) {
+                    fakeData.push(line);
+                });
                 
-                setInterval(function () {
-                    var rpmVariation = Math.floor((Math.random() - 0.5) * 1000);
-                    var throttleVariation = Math.floor(Math.random() * 100);
-                    
-                    self.status.at = new Date().toISOString();
-                    self.status.rpm += rpmVariation;
-                    self.status.throttle = throttleVariation;
-                    
-                    if (self.status.rpm < 600) {
-                        self.status.rpm = 600;
-                        self.status.engine_light = true;
-                    } else {
-                        self.status.engine_light = false;
-                    }
-                    
-                    if (self.status.rpm > 5000) {
-                        self.status.rpm = 5000;
-                        self.status.engine_light = true;
-                    } else {
-                        self.status.engine_light = false;
-                    }
-                    
-                    if (self.status.throttle < 0) self.status.throttle = 0;
-                    if (self.status.throttle > 100) self.status.throttle = 100;
-                                    
-                }, 1000);
+                var i = 0;
+                setInterval(function() {
+                    self.status = JSON.parse(fakeData[i]);
+                    i++;
+                }, 2000);
             }
         }
         
@@ -113,4 +79,11 @@ export module Obd2Reader {
             return this.status;
         }
     }
+    
+    // var obdReader = new Obd2Reader(true, 'COM4');
+    // obdReader.start();
+    
+    // setInterval(function() {
+    //     console.log('RPM: ' + obdReader.status.rpm + ' - Throttle: ' + obdReader.status.throttle + ' - Load: ' + obdReader.status.speed);
+    // }, 2000);
 }
