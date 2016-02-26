@@ -1,0 +1,15 @@
+{
+  "name": "location-monitor",
+  "version": "0.0.1",
+  "description": "Cross-references shuttle position with Microsoft building data using DocDB",
+  "main": "locationmonitor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "azure-event-hubs": "0.0.1",
+    "documentdb": "^1.5.5"
+  }
+}

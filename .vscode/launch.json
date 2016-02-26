@@ -39,6 +39,24 @@
 			"externalConsole": false,
 			"sourceMaps": true,
 			"outDir": "lib"
+		},{
+			"name": "location monitor",
+			"type": "node",
+			"request": "launch",
+			"program": "locationmonitor/locationmonitor.js",
+			"stopOnEntry": false,
+			"args": [],
+			"cwd": ".",
+			"runtimeExecutable": null,
+			"runtimeArgs": [
+				"--nolazy"
+			],
+			"env": {
+				"NODE_ENV": "development"
+			},
+			"externalConsole": false,
+			"sourceMaps": false,
+			"outDir": null
 		},
 		{
 			"name": "Attach",
