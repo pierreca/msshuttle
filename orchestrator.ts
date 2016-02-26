@@ -13,6 +13,11 @@ var Obd2Reader = require('./Obd2Reader').Obd2Reader;
 var GpsReader = require('./GpsReader').GpsReader;
 
 var connectionString = process.argv[2];
+var useRealData = true;
+if (process.argv[3] === '-f' || process.argv[3] === '--fake')
+{
+    useRealData = false;
+}
 
 class EngineRecord {
     at: string;
@@ -31,9 +36,9 @@ class Orchestrator {
     public static main() : number {
 
         var orchestrator = new Orchestrator();
-        var obd2 = new Obd2Reader.Obd2Reader(true, "COM4");
+        var obd2 = new Obd2Reader.Obd2Reader(useRealData, "COM4");
         obd2.start();
-        var gps = new GpsReader.GpsReader(true, "COM7");
+        var gps = new GpsReader.GpsReader(useRealData, "COM7");
         gps.start();
         const isReachable = require('is-reachable');
         
