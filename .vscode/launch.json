@@ -7,7 +7,7 @@
 			"request": "launch",
 			"program": "orchestrator.ts",
 			"stopOnEntry": false,
-			"args": ["HostName=msshuttle.azure-devices.net;DeviceId=pierre;SharedAccessKey=oGD4m3uW4sfi2UvyPmNKLDNpcbbHdiTkID06rTun5V0="],
+			"args": [],
 			"cwd": ".",
 			"runtimeExecutable": null,
 			"runtimeArgs": [
