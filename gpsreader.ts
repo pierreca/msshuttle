@@ -58,7 +58,9 @@ export module GpsReader {
                     });
                     
                     var i = 0;
+                    var last = fakeData.length - 1;
                     setInterval(function() {
+                        if (i > last) i = 0;
                         var parsedData = nmea.parse(fakeData[i]);
                         debug('Parsed: ' + JSON.stringify(parsedData));
                         if (parsedData.hasOwnProperty('lat')) {
