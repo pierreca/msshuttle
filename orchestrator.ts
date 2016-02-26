@@ -72,34 +72,45 @@ class Orchestrator {
                     var enginerecord = new EngineRecord ();
                     enginerecord.at = vs.at;
                     enginerecord.engine_light = vs.engine_light;
-                    enginerecord.rpm = vs.rpm;
-                    enginerecord.throttle = vs.throttle;
+                    enginerecord.rpm = Math.round(vs.rpm);
+                    enginerecord.throttle = Math.round(vs.throttle);
                     var gpsData = gps.status;
                     enginerecord.lat = gpsData.latitude;
                     enginerecord.lng = gpsData.longitude;
-                    
-                    var sendData = JSON.stringify(enginerecord);
-                    var message = new Message(sendData);
-                    messages.push(message);
+                    var nullOrUndefined= function(arg) {
+                        return arg===null || arg === undefined;
+                    }
+                    if (!(nullOrUndefined(enginerecord.at) ||
+                          nullOrUndefined(enginerecord.rpm) ||
+                          nullOrUndefined(enginerecord.throttle) || 
+                          nullOrUndefined(enginerecord.lat) ||
+                          nullOrUndefined(enginerecord.lng) ||
+                          nullOrUndefined(enginerecord.engine_light))) {
+                            var sendData = JSON.stringify(enginerecord);
+                            var message = new Message(sendData);
+                            messages.push(message);
+                            isReachable(hostName, function( err, reachable){
+                                if (err) {
+                                    console.log("could not determine online status");
+                                }
+                                else {
+                                    if (reachable) {
+                                        console.log('Sending message: ' + message.getData() + "count: " + messages.length.toString());
+                                        client.sendEventBatch(messages, orchestrator.printResultFor('send'));
+                                        messages = [];   
+                                    }
+                                    else {
+                                        console.log('storing message: ' + message.getData());
+                                    }
+                                }
+                            });                            
+                        }
+                                        
                     
                                 // console.log('Sending message: ' + message.getData());
                                 // client.sendEventBatch(messages, orchestrator.printResultFor('send'));
                                 // messages = [];                                                    
-                    isReachable(hostName, function( err, reachable){
-                        if (err) {
-                            console.log("could not determine online status");
-                        }
-                        else {
-                            if (reachable) {
-                                console.log('Sending message: ' + message.getData() + "count: " + messages.length.toString());
-                                client.sendEventBatch(messages, orchestrator.printResultFor('send'));
-                                messages = [];                                                    
-                            }
-                            else {
-                                console.log('storing message: ' + message.getData());
-                            }
-                        }
-                    });
+
                 // Read every 2 seconds
                 }, 2000);
 
