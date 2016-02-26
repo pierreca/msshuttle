@@ -12,6 +12,7 @@ var ConnectionString = require('azure-iot-common').ConnectionString;
 var Obd2Reader = require('./Obd2Reader').Obd2Reader;
 var GpsReader = require('./GpsReader').GpsReader;
 
+var connectionString = process.argv[2];
 
 class EngineRecord {
     at: string;
@@ -40,10 +41,10 @@ class Orchestrator {
 
         // String containing Hostname, Device Id & Device Key in the following formats:
         //  "HostName=<iothub_host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"
-        var connectionString = '[]';
         var connectionDict = ConnectionString.parse(connectionString);
         var hostName = 'bing.com:80';
-//        var hostName = connectionDict.HostName;
+        // library wasn't finding hostname, using a fixed address.
+        // var hostName = connectionDict.HostName;
 
 
         // fromConnectionString must specify a transport constructor, coming from any transport package.
