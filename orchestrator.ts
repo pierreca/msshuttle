@@ -7,6 +7,8 @@
 var Http = require('azure-iot-device-http').Http;
 var Client = require('azure-iot-device').Client;
 var Message = require('azure-iot-device').Message;
+var ConnectionString = require('azure-iot-common').ConnectionString;
+
 var Obd2Reader = require('./Obd2Reader').Obd2Reader;
 var GpsReader = require('./GpsReader').GpsReader;
 
@@ -32,13 +34,16 @@ class Orchestrator {
         obd2.start();
         var gps = new GpsReader.GpsReader(false, "COM7");
         gps.start();
-        var IsOnline = require('is-online');
+        const isReachable = require('is-reachable');
         
         var messages = [];
 
         // String containing Hostname, Device Id & Device Key in the following formats:
         //  "HostName=<iothub_host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"
         var connectionString = '[]';
+        var connectionDict = ConnectionString.parse(connectionString);
+        var hostName = 'bing.com:80';
+//        var hostName = connectionDict.HostName;
 
 
         // fromConnectionString must specify a transport constructor, coming from any transport package.
@@ -71,24 +76,24 @@ class Orchestrator {
                     var message = new Message(sendData);
                     messages.push(message);
                     
-                                console.log('Sending message: ' + message.getData());
+                                // console.log('Sending message: ' + message.getData());
+                                // client.sendEventBatch(messages, orchestrator.printResultFor('send'));
+                                // messages = [];                                                    
+                    isReachable(hostName, function( err, reachable){
+                        if (err) {
+                            console.log("could not determine online status");
+                        }
+                        else {
+                            if (reachable) {
+                                console.log('Sending message: ' + message.getData() + "count: " + messages.length.toString());
                                 client.sendEventBatch(messages, orchestrator.printResultFor('send'));
                                 messages = [];                                                    
-                    // IsOnline( function( err, online){
-                    //     if (err) {
-                    //         console.log("could not determine online status");
-                    //     }
-                    //     else {
-                    //         if (online) {
-                    //             console.log('Sending message: ' + message.getData());
-                    //             client.sendEventBatch(messages, orchestrator.printResultFor('send'));
-                    //             messages = [];                                                    
-                    //         }
-                    //         else {
-                    //             console.log('storing message: ' + message.getData());
-                    //         }
-                    //     }
-                    // });
+                            }
+                            else {
+                                console.log('storing message: ' + message.getData());
+                            }
+                        }
+                    });
                 // Read every 2 seconds
                 }, 2000);
 
