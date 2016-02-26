@@ -67,13 +67,15 @@ export module Obd2Reader {
                     fakeData.push(line);
                 });
                 
-                var i = 0;
-                var last = fakeData.length - 1;
-                setInterval(function() {
-                    if (i > last) i = 0;
-                    self.status = JSON.parse(fakeData[i]);
-                    i++;
-                }, 2000);
+                lineReader.on('close', function() {
+                    var i = 0;
+                    var last = fakeData.length - 1;
+                    setInterval(function() {
+                        if (i > last) i = 0;
+                        self.status = JSON.parse(fakeData[i]);
+                        i++;
+                    }, 2000);
+                });
             }
         }
         
